@@ -1,18 +1,18 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<body style=" background-color: #baae97;color:#010405">
+<body style=" background-color: floralwhite;color:darkred">
 <br>
     <div class="container">
-        <h2 style="text-align:center">MLB Players</h2>
+        <h2 style="text-align:center">Players Statistics</h2>
     <br>
     <div class="row">
         <div class="col">
-            <h5 style="text-align:center">Number of Players by Positions!</h5>
+            <h5 style="text-align:center">Number of Players in Each Position</h5>
         </div>
     </div>
         <div>
-            <p style="text-align:center">This chart displays position specific no. of players. The x axis shows the no. of players while the y axis shows the different categories in Positions. Click on the legend to toggle the data on or off!</p>
+            <p style="text-align:center">This chart displays the total count of players in each position. The x axis shows the position Name while the y axis shows the Player Count. Click on the legend to toggle the data on or off!</p>
         </div>
     <div class="row">
         <div class="col">
@@ -29,7 +29,7 @@
                         data : [{% for item in player_values %}
                         {{item}},
                         {% endfor %}],
-                        backgroundColor: 'rgb(154,255,99)'
+                        backgroundColor: 'rgb(46,143,188)'
                     }]
                 }
                 const chart1 = document.getElementById("myChart").getContext("2d");
