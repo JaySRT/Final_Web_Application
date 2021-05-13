@@ -37,3 +37,4 @@
   
 * It will start and run with MYSQL and Flask App and then open a browser and paste below URL - 
 `http://localhost:5000/`
+* Press Ctrl + C to finally stop the app after using.
