@@ -24,13 +24,34 @@ mysql.init_app(app)
 def index():
     return render_template('login.html', title='Login Page')
 
+
+@app.route('/stats', methods=['GET'])
+def charts_view():
+    legend = 'Player Count in Each Team'
+    labels = []
+    cursor = mysql.get_db().cursor()
+    cursor.execute(
+        'SELECT Position FROM mlbPlayers GROUP BY Position')
+    for temp in cursor.fetchall():
+        labels.append(list(temp.values())[0])
+    values = []
+    cursor.execute('SELECT COUNT(*) FROM mlbPlayers GROUP BY position')
+    for temp in cursor.fetchall():
+        values.append(list(temp.values())[0])
+    result = cursor.fetchall()
+    return render_template('chart.html', title='Home', player=result, player_labels=labels,
+                           player_legend=legend,
+                           player_values=values)
+
 @app.route('/login', methods=['GET'])
 def login():
     return render_template('login.html', title='Login Page')
 
+
 @app.route('/signup', methods=['GET'])
 def signup():
     return render_template('signup.html', title='SignUp Page')
+
 
 @app.route('/index', methods=['GET'])
 def show_index():
@@ -39,6 +60,7 @@ def show_index():
     cursor.execute('SELECT * FROM mlb_players')
     result = cursor.fetchall()
     return render_template('index.html', title='Home', user=user, players=result)
+
 
 @app.route('/logins/new', methods=['POST'])
 def add_login():
@@ -66,6 +88,7 @@ def add_login():
         cursor.execute('SELECT * FROM tblErrors where errName=%s', 'USER_EXISTS')
         result = cursor.fetchall()
         return render_template('notify.html', title='Notify', player=result[0])
+
 
 @app.route('/checklogin', methods=['POST'])
 def form_check_login():
@@ -101,16 +124,18 @@ def form_check_login():
             result = cursor.fetchall()
             return render_template('notify.html', title='Notify', player=result[0])
 
+
 @app.route('/validateLogin/<int:intHash>', methods=['GET', 'POST'])
 def validateLogin(intHash):
-        cursor = mysql.get_db().cursor()
-        inputData = str(intHash)
-        sql_update_query = """UPDATE tblUsers t SET t.userHash = '' WHERE t.userHash = %s """
-        cursor.execute(sql_update_query, inputData)
-        mysql.get_db().commit()
-        cursor.execute('SELECT * FROM tblErrors where errName=%s', 'EMAIL_VERIFIED')
-        result = cursor.fetchall()
-        return render_template('notify.html', title='Notify', player=result[0])
+    cursor = mysql.get_db().cursor()
+    inputData = str(intHash)
+    sql_update_query = """UPDATE tblUsers t SET t.userHash = '' WHERE t.userHash = %s """
+    cursor.execute(sql_update_query, inputData)
+    mysql.get_db().commit()
+    cursor.execute('SELECT * FROM tblErrors where errName=%s', 'EMAIL_VERIFIED')
+    result = cursor.fetchall()
+    return render_template('notify.html', title='Notify', player=result[0])
+
 
 @app.route('/view/<int:player_id>', methods=['GET'])
 def record_view(player_id):
@@ -187,6 +212,7 @@ def api_retrieve(player_id) -> str:
     resp = Response(json_result, status=200, mimetype='application/json')
     return resp
 
+
 @app.route('/api/v1/Names/<int:player_id>', methods=['PUT'])
 def api_edit(player_id) -> str:
     cursor = mysql.get_db().cursor()
@@ -201,6 +227,7 @@ def api_edit(player_id) -> str:
     resp = Response(status=200, mimetype='application/json')
     return resp
 
+
 @app.route('/api/v1/Names/', methods=['POST'])
 def api_add() -> str:
     cursor = mysql.get_db().cursor()
@@ -214,6 +241,7 @@ def api_add() -> str:
     mysql.get_db().commit()
     resp = Response(status=201, mimetype='application/json')
     return resp
+
 
 @app.route('/api/v1/Names/<int:player_id>', methods=['DELETE'])
 def api_delete(player_id) -> str:
